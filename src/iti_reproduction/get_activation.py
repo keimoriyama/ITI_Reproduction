@@ -1,4 +1,5 @@
 import pickle
+from pathlib import Path
 
 import numpy as np
 import pyvene as pv
@@ -32,7 +33,7 @@ def get_activation(cfg: ActivationConfig):
             raise ValueError("Invalid dataset name")
 
     if cfg.debug:
-        dataset = dataset.select([0, 1])
+        dataset = dataset.select([0])
 
     print("Tokenizing prompts")
     if cfg.dataset_name == "tqa_gen" or cfg.dataset_name == "tqa_gen_end_q":
@@ -70,16 +71,24 @@ def get_activation(cfg: ActivationConfig):
         all_head_wise_activations.append(head_wise_activations.copy())
 
     print("Saving labels")
-    np.save(f"./features/{cfg.model_name}_{cfg.dataset_name}_labels.npy", labels)
+    base_dir = Path("./features")
+    base_dir.mkdir(parents=True, exist_ok=True)
+    np.save(
+        base_dir / f"{cfg.model_name}_{cfg.dataset_name}_labels.npy".replace("/", "_"),
+        labels,
+    )
 
     print("Saving layer wise activations")
     np.save(
-        f"./features/{cfg.model_name}_{cfg.dataset_name}_layer_wise.npy",
+        base_dir
+        / f"{cfg.model_name}_{cfg.dataset_name}_layer_wise.npy".replace("/", "_"),
         all_layer_wise_activations,
     )
 
     print("Saving head wise activations")
     np.save(
-        f"./features/{cfg.model_name}_{cfg.dataset_name}_head_wise.npy",
+        f"./features/{cfg.model_name}_{cfg.dataset_name}_head_wise.npy".replace(
+            "/", "_"
+        ),
         all_head_wise_activations,
     )
