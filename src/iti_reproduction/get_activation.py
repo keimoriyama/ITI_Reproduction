@@ -1,10 +1,15 @@
 import pickle
 
+import numpy as np
+import pyvene as pv
 from datasets import load_dataset
+from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from iti_reproduction.interveners import Collector, wrapper
 from iti_reproduction.scheme import ActivationConfig
-from iti_reproduction.utils import (tokenized_tqa, tokenized_tqa_gen,
+from iti_reproduction.utils import (get_llama_activations_pyvene,
+                                    tokenized_tqa, tokenized_tqa_gen,
                                     tokenized_tqa_gen_end_q)
 
 
@@ -34,3 +39,43 @@ def get_activation(cfg: ActivationConfig):
             pickle.dump(categories, f)
     else:
         prompts, labels = formatter(dataset, tokenizer)
+    collectors = []
+    pv_config = []
+    for layer in range(model.config.num_hidden_layers):
+        collector = Collector(
+            multiplier=0, head=-1
+        )  # head=-1 to collect all head activations, multiplier doens't matter
+        collectors.append(collector)
+        pv_config.append(
+            {
+                "component": f"model.layers[{layer}].self_attn.o_proj.input",
+                "intervention": wrapper(collector),
+            }
+        )
+    collected_model = pv.IntervenableModel(pv_config, model)
+
+    all_layer_wise_activations = []
+    all_head_wise_activations = []
+
+    print("Getting activations")
+    for prompt in tqdm(prompts):
+        layer_wise_activations, head_wise_activations, _ = get_llama_activations_pyvene(
+            collected_model, collectors, prompt, cfg.device
+        )
+        all_layer_wise_activations.append(layer_wise_activations[:, -1, :].copy())
+        all_head_wise_activations.append(head_wise_activations.copy())
+
+    print("Saving labels")
+    np.save(f"../features/{cfg.model_name}_{cfg.dataset_name}_labels.npy", labels)
+
+    print("Saving layer wise activations")
+    np.save(
+        f"../features/{cfg.model_name}_{cfg.dataset_name}_layer_wise.npy",
+        all_layer_wise_activations,
+    )
+
+    print("Saving head wise activations")
+    np.save(
+        f"../features/{cfg.model_name}_{cfg.dataset_name}_head_wise.npy",
+        all_head_wise_activations,
+    )

@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/iti_reproduction", "src"]
+packages = ["src/iti_reproduction"]
 
 [tool.hatch.version]
 path = "src/iti_reproduction/__init__.py"
@@ -23,4 +23,5 @@ path = "src/iti_reproduction/__init__.py"
 [dependency-groups]
 dev = [
     "ipdb>=0.13.13",
+    "pytest>=8.4.1",
 ]
