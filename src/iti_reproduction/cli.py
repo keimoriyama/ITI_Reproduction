@@ -23,9 +23,12 @@ class DeferredYamlConfigSettingsSource(YamlConfigSettingsSource):
 ConfigT = TypeVar("ConfigT", bound=BaseModel)
 
 
-def setup_cli(base_model: Type[ConfigT], commands: dict[str, Callable]) -> ConfigT:
+def setup_cli(
+    base_model: Type[ConfigT], commands: dict[str, Callable] | None = None
+) -> ConfigT:
     class WrapSettings(
         BaseSettings,
+        base_model,  # type: ignore
         cli_implicit_flags=True,
     ):
         config: FilePath | None = None
@@ -55,13 +58,21 @@ def setup_cli(base_model: Type[ConfigT], commands: dict[str, Callable]) -> Confi
                 print(self.model_dump_json(indent=2))
                 sys.exit(0)
 
-    parser = argparse.ArgumentParser(add_help=False)
-    parser.add_argument("command", choices=commands.keys(), help="sub commands")
-    help_flags = ["-h", "--help"]
-    has_help = any(flag in sys.argv[1:] for flag in help_flags)
-    if has_help and (len(sys.argv) <= 2 or sys.argv[1] in help_flags):
-        parser.print_help()
-        sys.exit(0)
-    args, remaining_args = parser.parse_known_args()
-    parsed_settings = CliApp.run(WrapSettings, cli_args=remaining_args)
-    commands[args.command](base_model.model_validate(parsed_settings.model_dump()))
+    if commands is not None:
+        parser = argparse.ArgumentParser(add_help=False)
+        parser.add_argument("command", choices=commands.keys(), help="sub commands")
+
+        help_flags = ["-h", "--help"]
+        has_help = any(flag in sys.argv[1:] for flag in help_flags)
+
+        if has_help and (len(sys.argv) <= 2 or sys.argv[1] in help_flags):
+            parser.print_help()
+            sys.exit(0)
+        args, remaining_args = parser.parse_known_args()
+
+        parsed_settings = CliApp.run(WrapSettings, cli_args=remaining_args)
+        commands[args.command](base_model.model_validate(parsed_settings.model_dump()))
+    else:
+        parsed_settings = CliApp.run(WrapSettings)
+
+    return base_model.model_validate(parsed_settings.model_dump())

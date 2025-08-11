@@ -1,0 +1,5 @@
+model_name: "meta-llama/Llama-2-7b-chat-hf"
+model_prefix: ""
+dataset_name: "tqa_mc2"
+device: "cpu"
+debug: false

@@ -15,7 +15,7 @@ from iti_reproduction.utils import (get_llama_activations_pyvene,
 
 def get_activation(cfg: ActivationConfig):
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
-    model = AutoModelForCausalLM.from_pretrained(cfg.model_name, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(cfg.model_name, device_map=cfg.device)
     match cfg.dataset_name:
         case "tqa_mc2":
             dataset = load_dataset("truthfulqa/truthful_qa", "multiple_choice")[
@@ -30,6 +30,10 @@ def get_activation(cfg: ActivationConfig):
             formatter = tokenized_tqa_gen_end_q
         case _:
             raise ValueError("Invalid dataset name")
+
+    if cfg.debug:
+        dataset = dataset.select([0, 1])
+
     print("Tokenizing prompts")
     if cfg.dataset_name == "tqa_gen" or cfg.dataset_name == "tqa_gen_end_q":
         prompts, labels, categories = formatter(dataset, tokenizer)
@@ -66,16 +70,16 @@ def get_activation(cfg: ActivationConfig):
         all_head_wise_activations.append(head_wise_activations.copy())
 
     print("Saving labels")
-    np.save(f"../features/{cfg.model_name}_{cfg.dataset_name}_labels.npy", labels)
+    np.save(f"./features/{cfg.model_name}_{cfg.dataset_name}_labels.npy", labels)
 
     print("Saving layer wise activations")
     np.save(
-        f"../features/{cfg.model_name}_{cfg.dataset_name}_layer_wise.npy",
+        f"./features/{cfg.model_name}_{cfg.dataset_name}_layer_wise.npy",
         all_layer_wise_activations,
     )
 
     print("Saving head wise activations")
     np.save(
-        f"../features/{cfg.model_name}_{cfg.dataset_name}_head_wise.npy",
+        f"./features/{cfg.model_name}_{cfg.dataset_name}_head_wise.npy",
         all_head_wise_activations,
     )
