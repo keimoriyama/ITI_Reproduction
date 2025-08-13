@@ -1,0 +1,30 @@
+volumes:
+  venv:
+
+services:
+    iti_reproduce:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: iti_reproduce
+        volumes:
+          - type: bind
+            source: .
+            target: /app
+          - venv:/app/.venv
+          - venv:/app/.cache
+        environment:
+          NVIDIA_VISIBLE_DEVICES: all
+          NVIDIA_DRIVER_CAPABILITIES: all
+        deploy:
+          resources:
+            reservations:
+              devices:
+                - capabilities:
+                    - gpu
+        command: tail -f /dev/null
+        ports:
+          - '5000:5000'
+        stdin_open: true
+        tty: true
+        container_name: iti_reproduce

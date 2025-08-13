@@ -8,13 +8,13 @@ from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from iti_reproduction.interveners import Collector, wrapper
-from iti_reproduction.scheme import ActivationConfig
+from iti_reproduction.scheme import ITIConfig
 from iti_reproduction.utils import (get_llama_activations_pyvene,
                                     tokenized_tqa, tokenized_tqa_gen,
                                     tokenized_tqa_gen_end_q)
 
 
-def get_activation(cfg: ActivationConfig):
+def get_activation(cfg: ITIConfig):
     tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
     model = AutoModelForCausalLM.from_pretrained(cfg.model_name, device_map=cfg.device)
     match cfg.dataset_name:
@@ -39,7 +39,10 @@ def get_activation(cfg: ActivationConfig):
     if cfg.dataset_name == "tqa_gen" or cfg.dataset_name == "tqa_gen_end_q":
         prompts, labels, categories = formatter(dataset, tokenizer)
         with open(
-            f"../features/{cfg.model_name}_{cfg.dataset_name}_categories.pkl", "wb"
+            f"./features/{cfg.model_name}_{cfg.dataset_name}_categories.pkl".replace(
+                "/", "_"
+            ),
+            "wb",
         ) as f:
             pickle.dump(categories, f)
     else:
