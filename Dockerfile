@@ -59,6 +59,4 @@ RUN uv sync
 
 ENV PATH="/app/.venv/bin:/usr/local/bin:$PATH"
 
-RUN echo $PATH
-
 CMD ["/bin/bash"]
