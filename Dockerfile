@@ -53,10 +53,12 @@ USER appuser
 
 WORKDIR ${APP_DIR}
 
-COPY --chmod=777 pyproject.toml uv.lock .python-version ./
+COPY --chmod=777 README.md pyproject.toml uv.lock .python-version src/ ./
 
 RUN uv sync
 
-ENV PATH="/app/.venv/bin:$HOME/.local/bin:/usr/local/bin:$PATH"
+ENV PATH="/app/.venv/bin:/usr/local/bin:$PATH"
+
+RUN echo $PATH
 
 CMD ["/bin/bash"]
