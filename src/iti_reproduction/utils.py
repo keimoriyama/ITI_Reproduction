@@ -1,15 +1,11 @@
-import logging
 import pickle
 import warnings
 
-import evaluate
 import numpy as np
 import pandas as pd
-import sacrebleu
 import torch
 import torch.nn.functional as F
 from datasets import load_dataset
-from rouge_score import rouge_scorer, scoring
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from tqdm import tqdm
