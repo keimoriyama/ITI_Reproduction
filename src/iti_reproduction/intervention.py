@@ -1,16 +1,12 @@
-import argparse
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pyvene as pv
 import torch
 from datasets import load_dataset
 from einops import rearrange
 from transformers import AutoModelForCausalLM, AutoTokenizer
-
-sys.path.append("./")
-import pyvene as pv
 
 from iti_reproduction.interveners import ITI_Intervener, wrapper
 from iti_reproduction.scheme import ITIConfig
