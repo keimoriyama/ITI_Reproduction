@@ -7,8 +7,8 @@ import pandas as pd
 import sacrebleu
 from rouge_score import rouge_scorer, scoring
 
-from iti_reproduction.utils import (ANSWER_COL, BEST_COL, INCORRECT_COL,
-                                    split_multi_answer)
+from iti_reproduction.presets import ANSWER_COL, INCORRECT_COL
+from iti_reproduction.utils import split_multi_answer
 
 
 def run_bleu_and_rouge(model_key, frame):

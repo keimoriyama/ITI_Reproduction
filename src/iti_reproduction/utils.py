@@ -15,13 +15,9 @@ from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from iti_reproduction.evaluate import MC_calcs, run_BLEURT
-from iti_reproduction.presets import preset_map
-
-# columns
-BEST_COL = "Best Answer"
-ANSWER_COL = "Correct Answers"
-INCORRECT_COL = "Incorrect Answers"
+from iti_reproduction.evaluate import MC_calcs, run_bleu_and_rouge, run_BLEURT
+from iti_reproduction.presets import (ANSWER_COL, BEST_COL, INCORRECT_COL,
+                                      preset_map)
 
 
 def format_truthfulqa(question, choice):
