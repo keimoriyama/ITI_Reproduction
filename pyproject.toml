@@ -18,7 +18,6 @@ dependencies = [
     "evaluate>=0.4.5",
     "sacrebleu>=2.5.1",
     "rouge-score>=0.1.2",
-    "presets>=1.0.0",
     "scikit-learn>=1.7.1",
 ]
 

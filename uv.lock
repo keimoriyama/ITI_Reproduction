@@ -723,7 +723,6 @@ dependencies = [
     { name = "nnsight" },
     { name = "numpy" },
     { name = "pandas" },
-    { name = "presets" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pyvene" },
@@ -748,7 +747,6 @@ requires-dist = [
     { name = "nnsight", specifier = ">=0.4.11" },
     { name = "numpy", specifier = ">=2.3.2" },
     { name = "pandas", specifier = ">=2.3.1" },
-    { name = "presets", specifier = ">=1.0.0" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pydantic-settings", specifier = ">=2.10.1" },
     { name = "pyvene", specifier = ">=0.1.7" },
@@ -1684,15 +1682,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/5e/77/65b857a69ed876e1951e88aaba60f5ce6120c33703f7cb61a3c894b8c1b6/portalocker-3.2.0.tar.gz", hash = "sha256:1f3002956a54a8c3730586c5c77bf18fae4149e07eaf1c29fc3faf4d5a3f89ac", size = 95644, upload-time = "2025-06-14T13:20:40.03Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4b/a6/38c8e2f318bf67d338f4d629e93b0b4b9af331f455f0390ea8ce4a099b26/portalocker-3.2.0-py3-none-any.whl", hash = "sha256:3cdc5f565312224bc570c49337bd21428bba0ef363bbcf58b9ef4a9f11779968", size = 22424, upload-time = "2025-06-14T13:20:38.083Z" },
-]
-
-[[package]]
-name = "presets"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/85/ca/4a5820c3b67dda086432512e35897c2ce059349c97b90ba5357967ff4b40/presets-1.0.0.tar.gz", hash = "sha256:8eb49a436c5ddf7109167da7f3c15da7e7c5ca38bd1aae0ff6c013eb92d7c950", size = 4726, upload-time = "2025-02-05T17:53:54.693Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/36/0c/61aa12b862866c177cbe002c1b942f6b758c3dd4f5972dc48478a765913b/presets-1.0.0-py3-none-any.whl", hash = "sha256:f8cdfad5cc40e2ab9ff2ffd980256a1bf116352acc417cada56522da67b3af6e", size = 4393, upload-time = "2025-02-05T17:53:49.353Z" },
 ]
 
 [[package]]
