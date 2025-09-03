@@ -6,7 +6,7 @@ This repository is a reimplementation of [honest_llama](https://github.com/liken
 
 ## Installation
 
-You can choose [Docker](https://www.docker.com/) or [uv](https://docs.astral.sh/uv/) for the environmental setup.
+Please use [Docker](https://www.docker.com/) or [uv](https://docs.astral.sh/uv/) for the environmental setup.
 
 If you use uv, please install above link and run this command.
 ```sh
@@ -21,7 +21,17 @@ docker compose up -d
 
 ## Run Experiments
 
-TBD
+### Get Activations 
+
+```
+uv run main.py activation --config config/config.yaml 
+```
+
+### Interventions
+
+```
+uv run main.py intervention --config config/config.yaml 
+```
 
 ## Results
 
