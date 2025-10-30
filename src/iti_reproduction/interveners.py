@@ -1,6 +1,7 @@
 import torch
 
 
+# intervenerには、collectorのインスタンスが入る
 def wrapper(intervener):
     def wrapped(*args, **kwargs):
         return intervener(*args, **kwargs)

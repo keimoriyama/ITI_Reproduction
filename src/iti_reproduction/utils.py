@@ -11,7 +11,8 @@ from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from iti_reproduction.evaluate import MC_calcs, run_bleu_and_rouge, run_BLEURT
+from iti_reproduction.evaluate import (MC_calcs, run_bleu_and_rouge,
+                                       run_BLEURT, split_multi_answer)
 from iti_reproduction.presets import (ANSWER_COL, BEST_COL, INCORRECT_COL,
                                       preset_map)
 
@@ -106,7 +107,9 @@ def tokenized_tqa_gen(dataset, tokenizer):
 def get_llama_activations_pyvene(collected_model, collectors, prompt, device):
     with torch.no_grad():
         prompt = prompt.to(device)
+        # output[0]はNoneになっている
         output = collected_model({"input_ids": prompt, "output_hidden_states": True})[1]
+
     hidden_states = output.hidden_states
     hidden_states = torch.stack(hidden_states, dim=0).squeeze()
     hidden_states = hidden_states.detach().cpu().numpy()
@@ -506,9 +509,9 @@ def run_kl_wrt_orig(
     separate_kl_device=None,
     orig_model=None,
 ):
-    assert (
-        "llama" in model_key or "alpaca" in model_key or "vicuna" in model_key
-    ), "model must be llama model"
+    assert "llama" in model_key or "alpaca" in model_key or "vicuna" in model_key, (
+        "model must be llama model"
+    )
 
     # load owt text
     # note this is tokenized with llama tokenizer
@@ -1064,25 +1067,6 @@ def format_prompt(ser, preset="qa", format="general"):
 
     prompt = "".join([preset_map[preset], "\n\nQ: ", ser["Question"]])
     return prompt
-
-
-def split_multi_answer(ans, sep=";", close=True):
-    """Splits string of all reference answers into a list of formatted answers"""
-
-    answers = ans.strip().split(sep)
-    split_answers = []
-    for a in answers:
-        a = a.strip()
-        if len(a):
-            if close:  # add a period after all answers
-                if a[-1] != ".":
-                    split_answers.append(a + ".")
-                else:
-                    split_answers.append(a)
-            else:
-                split_answers.append(a)
-
-    return split_answers
 
 
 def load_questions(filename="questions.csv"):

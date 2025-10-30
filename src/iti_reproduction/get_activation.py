@@ -49,6 +49,7 @@ def get_activation(cfg: ITIConfig):
         prompts, labels = formatter(dataset, tokenizer)
     collectors = []
     pv_config = []
+
     for layer in range(model.config.num_hidden_layers):
         collector = Collector(
             multiplier=0, head=-1
@@ -70,6 +71,7 @@ def get_activation(cfg: ITIConfig):
         layer_wise_activations, head_wise_activations, _ = get_llama_activations_pyvene(
             collected_model, collectors, prompt, cfg.device
         )
+        # 一番最後の特徴量を持ってくる
         all_layer_wise_activations.append(layer_wise_activations[:, -1, :].copy())
         all_head_wise_activations.append(head_wise_activations.copy())
 
