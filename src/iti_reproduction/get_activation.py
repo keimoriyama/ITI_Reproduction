@@ -2,6 +2,7 @@ import pickle
 from pathlib import Path
 
 import numpy as np
+import polars as pl
 import pyvene as pv
 from datasets import load_dataset
 from tqdm import tqdm
@@ -46,7 +47,7 @@ def get_activation(cfg: ITIConfig):
         ) as f:
             pickle.dump(categories, f)
     else:
-        prompts, labels = formatter(dataset, tokenizer)
+        raw_prompt, prompts, labels = formatter(dataset, tokenizer)
     collectors = []
     pv_config = []
 
@@ -75,9 +76,14 @@ def get_activation(cfg: ITIConfig):
         all_layer_wise_activations.append(layer_wise_activations[:, -1, :].copy())
         all_head_wise_activations.append(head_wise_activations.copy())
 
-    print("Saving labels")
     base_dir = Path("./features")
     base_dir.mkdir(parents=True, exist_ok=True)
+    print("saving raw prompts")
+    pl.DataFrame({"prompts": raw_prompt}).write_csv(
+        base_dir / f"{cfg.model_name}_{cfg.dataset_name}_prompts.csv".replace("/", "_")
+    )
+
+    print("Saving labels")
     np.save(
         base_dir / f"{cfg.model_name}_{cfg.dataset_name}_labels.npy".replace("/", "_"),
         labels,
@@ -92,8 +98,7 @@ def get_activation(cfg: ITIConfig):
 
     print("Saving head wise activations")
     np.save(
-        f"./features/{cfg.model_name}_{cfg.dataset_name}_head_wise.npy".replace(
-            "/", "_"
-        ),
+        base_dir
+        / f"{cfg.model_name}_{cfg.dataset_name}_head_wise.npy".replace("/", "_"),
         all_head_wise_activations,
     )

@@ -28,6 +28,7 @@ def format_truthfulqa_end_q(question, choice, rand_question):
 def tokenized_tqa(dataset, tokenizer):
     all_prompts = []
     all_labels = []
+    raw_prompts = []
     for i in range(len(dataset)):
         question = dataset[i]["question"]
         choices = dataset[i]["mc2_targets"]["choices"]
@@ -41,11 +42,12 @@ def tokenized_tqa(dataset, tokenizer):
             prompt = format_truthfulqa(question, choice)
             if i == 0 and j == 0:
                 print(prompt)
+            raw_prompts.append(prompt)
             prompt = tokenizer(prompt, return_tensors="pt").input_ids
             all_prompts.append(prompt)
             all_labels.append(label)
 
-    return all_prompts, all_labels
+    return raw_prompts, all_prompts, all_labels
 
 
 def tokenized_tqa_gen_end_q(dataset, tokenizer):
