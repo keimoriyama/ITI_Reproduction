@@ -1,5 +1,6 @@
 from typing import Literal, Optional
 
+import torch
 from pydantic import BaseModel, Field
 
 
@@ -23,7 +24,7 @@ class ITIConfig(BaseModel):
     use_center_of_mass: bool = Field(False, description="use center of mass direction")
     use_random_dir: bool = Field(False, description="use random direction")
 
-    device: Literal["cpu", "cuda"] = Field("cpu", description="device")
+    device: Literal["cpu", "cuda"] = "cuda" if torch.cuda.is_available() else "cpu"
     debug: bool = Field(False, description="debug mode")
     seed: int = Field(42, description="seed")
     judge_name: Optional[str] = Field(None)
