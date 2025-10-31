@@ -48,10 +48,14 @@ def intervene(cfg: ITIConfig):
     num_key_value_groups = num_heads // num_key_value_heads
 
     # load activations
+    base_dir = Path("./features/")
     head_wise_activations = np.load(
-        f"./features/{cfg.model_name}_{cfg.dataset_name}_head_wise.npy"
+        base_dir
+        / f"{cfg.model_name}_{cfg.dataset_name}_head_wise.npy".replace("/", "_")
     )
-    labels = np.load(f"./features/{cfg.model_name}_{cfg.dataset_name}_labels.npy")
+    labels = np.load(
+        base_dir / f"{cfg.model_name}_{cfg.dataset_name}_labels.npy".replace("/", "_")
+    )
     head_wise_activations = rearrange(
         head_wise_activations, "b l (h d) -> b l h d", h=num_heads
     )
@@ -60,13 +64,15 @@ def intervene(cfg: ITIConfig):
         cfg.dataset_name if cfg.activations_dataset is None else cfg.activations_dataset
     )
     tuning_activations = np.load(
-        f"./features/{cfg.model_name}_{activations_dataset}_head_wise.npy"
+        base_dir
+        / f"{cfg.model_name}_{activations_dataset}_head_wise.npy".replace("/", "_")
     )
     tuning_activations = rearrange(
         tuning_activations, "b l (h d) -> b l h d", h=num_heads
     )
     tuning_labels = np.load(
-        f"./features/{cfg.model_name}_{activations_dataset}_labels.npy"
+        base_dir
+        / f"{cfg.model_name}_{activations_dataset}_labels.npy".replace("/", "_")
     )
 
     separated_head_wise_activations, separated_labels, idxs_to_split_at = (
@@ -146,9 +152,7 @@ def intervene(cfg: ITIConfig):
                 dir = dir / torch.norm(dir)
                 activations = torch.tensor(
                     tuning_activations[:, layer, head, :], dtype=torch.float32
-                ).to(
-                    "cpu"
-                )  # batch x 128
+                ).to("cpu")  # batch x 128
                 proj_vals = activations @ dir.T
                 proj_val_std = torch.std(proj_vals)
                 direction[head * head_dim : (head + 1) * head_dim] = dir * proj_val_std
