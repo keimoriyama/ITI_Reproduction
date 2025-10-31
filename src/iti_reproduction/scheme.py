@@ -11,7 +11,7 @@ class ITIConfig(BaseModel):
     model_prefix: str = Field(default="", description="prefix for the result")
     dataset_name: str = Field(default="tqa_mc2", description="dataset name")
     activation_dataset: Optional[str] = Field(
-            default=None,
+        default=None,
         description="feature bank for calculating std along direction",
     )
 
@@ -28,4 +28,4 @@ class ITIConfig(BaseModel):
     seed: int = Field(42, description="seed")
     judge_name: Optional[str] = Field(None)
     info_name: Optional[str] = Field(None)
-    instaruction_prompt: Optional[str] = Field(None)
+    instruction_prompt: Optional[str] = Field(None)
