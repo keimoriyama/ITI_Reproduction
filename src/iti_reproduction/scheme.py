@@ -10,8 +10,8 @@ class ITIConfig(BaseModel):
     )
     model_prefix: str = Field(default="", description="prefix for the result")
     dataset_name: str = Field(default="tqa_mc2", description="dataset name")
-    activation_dataset: str = Field(
-        default="tqa_gen_end_q",
+    activation_dataset: Optional[str] = Field(
+            default=None,
         description="feature bank for calculating std along direction",
     )
 
