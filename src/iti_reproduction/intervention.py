@@ -61,7 +61,7 @@ def intervene(cfg: ITIConfig):
     )
     # tuning dataset: no labels used, just to get std of activations along the direction
     activations_dataset = (
-        cfg.dataset_name if cfg.activations_dataset is None else cfg.activations_dataset
+        cfg.dataset_name if cfg.activation_dataset is None else cfg.activation_dataset
     )
     tuning_activations = np.load(
         base_dir
