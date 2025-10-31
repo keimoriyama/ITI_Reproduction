@@ -108,6 +108,7 @@ def intervene(cfg: ITIConfig):
 
         # get directions
         # if cfg.use_center_of_mass:
+        # 解答がTrueとFalseのサンプルにおける方向ベクトルの平均の差の計算をしている
         com_directions = get_com_directions(
             num_layers,
             num_heads,
@@ -118,6 +119,7 @@ def intervene(cfg: ITIConfig):
         )
         # else:
         #     com_directions = None
+        # top_heads: List[Tuple[int, int]] = [(layer, head), ...]
         top_heads, probes = get_top_heads(
             train_set_idxs,
             val_set_idxs,
@@ -145,14 +147,18 @@ def intervene(cfg: ITIConfig):
         for layer, heads in top_heads_by_layer.items():
             direction = torch.zeros(head_dim * num_heads).to("cpu")
             for head in heads:
+                # direction
                 dir = torch.tensor(
                     com_directions[layer_head_to_flattened_idx(layer, head, num_heads)],
                     dtype=torch.float32,
                 ).to("cpu")
+                # 正規化
                 dir = dir / torch.norm(dir)
                 activations = torch.tensor(
                     tuning_activations[:, layer, head, :], dtype=torch.float32
                 ).to("cpu")  # batch x 128
+                # ここは標準偏差を計算している？
+                # 論文と付き合わせながら確認する必要あり
                 proj_vals = activations @ dir.T
                 proj_val_std = torch.std(proj_vals)
                 direction[head * head_dim : (head + 1) * head_dim] = dir * proj_val_std

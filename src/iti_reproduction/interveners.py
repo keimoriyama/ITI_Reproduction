@@ -39,6 +39,7 @@ class ITI_Intervener:
     collect_action = True
     attr_idx = -1
 
+    # multiplierは介入の強さを決めるパラメータ
     def __init__(self, direction, multiplier):
         if not isinstance(direction, torch.Tensor):
             direction = torch.tensor(direction)

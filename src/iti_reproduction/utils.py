@@ -906,6 +906,7 @@ def get_top_heads(
             num_heads * num_layers, num_heads * num_layers, replace=False
         )
         top_heads = [
+            # headとlayerにidxを変換している
             flattened_idx_to_layer_head(idx, num_heads)
             for idx in random_idxs[:num_to_intervene]
         ]
