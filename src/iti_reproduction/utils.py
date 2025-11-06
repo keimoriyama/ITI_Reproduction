@@ -976,7 +976,9 @@ def get_separated_activations(labels, head_wise_activations):
     # (data_num, head_num, layer_num, dim)
     separated_head_wise_activations = np.split(head_wise_activations, idxs_to_split_at)
 
-    import ipdb;ipdb.set_trace()
+    import ipdb
+
+    ipdb.set_trace()
     return separated_head_wise_activations, separated_labels, idxs_to_split_at
 
 
@@ -993,6 +995,8 @@ def get_com_directions(
     for layer in tqdm(range(num_layers), desc="get_com_directions"):
         for head in range(num_heads):
             usable_idxs = np.concatenate([train_set_idxs, val_set_idxs], axis=0)
+            # 普通にまとめているだけっぽいか？
+            # Question単位でまとめている
             usable_head_wise_activations = np.concatenate(
                 [
                     separated_head_wise_activations[i][:, layer, head, :]
