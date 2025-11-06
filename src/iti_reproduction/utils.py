@@ -955,6 +955,8 @@ def get_interventions_dict(
 
 def get_separated_activations(labels, head_wise_activations):
     # separate activations by question
+    # 一つのQに複数のクエリが存在するため、質問毎に特徴量をまとめている
+
     dataset = load_dataset("truthful_qa", "multiple_choice")["validation"]
     actual_labels = []
     for i in range(len(dataset)):
@@ -972,7 +974,7 @@ def get_separated_activations(labels, head_wise_activations):
                 labels[idxs_to_split_at[i - 1] : idxs_to_split_at[i]]
             )
     assert separated_labels == actual_labels
-
+    # (data_num, head_num, layer_num, dim)
     separated_head_wise_activations = np.split(head_wise_activations, idxs_to_split_at)
 
     return separated_head_wise_activations, separated_labels, idxs_to_split_at

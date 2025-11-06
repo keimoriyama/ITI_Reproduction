@@ -10,18 +10,33 @@ def _():
     import polars as pl
     from transformers import AutoModelForCausalLM
     from einops import rearrange
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import accuracy_score
+    import seaborn as sns
+    import random
+
 
     import gc
 
     model = AutoModelForCausalLM.from_pretrained(
-        "meta-llama/Llama-2-7b-chat-hf", device_map="auto", trust_remote_code=True
+        "meta-llama/Llama-2-7b-hf", device_map="auto", trust_remote_code=True
     )
     num_layers = model.config.num_hidden_layers
     num_heads = model.config.num_attention_heads
     del model
     gc.collect()
     num_layers, num_heads
-    return np, num_heads, num_layers, pl, rearrange
+    return (
+        LogisticRegression,
+        accuracy_score,
+        np,
+        num_heads,
+        num_layers,
+        pl,
+        random,
+        rearrange,
+        sns,
+    )
 
 
 @app.cell
@@ -43,14 +58,6 @@ def _(pl):
 
 
 @app.cell
-def _():
-    from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import accuracy_score
-    import random
-    return (random,)
-
-
-@app.cell
 def _(head_wise_activation, labels, random):
     data_num = head_wise_activation.shape[0]
     train_idx = random.sample(range(data_num), k=int(data_num * 0.75))
@@ -60,27 +67,59 @@ def _(head_wise_activation, labels, random):
     all_X_val = head_wise_activation[val_idx]
     y_val = labels[val_idx]
     all_X_train.shape, y_train.shape
-    return all_X_train, all_X_val
+    return all_X_train, all_X_val, y_train, y_val
 
 
 @app.cell
-def _(all_X_train):
-    all_X_train.shape
+def _(all_X_train, y_train):
+    all_X_train.shape, y_train.shape
     return
 
 
 @app.cell
-def _(all_X_train, all_X_val, num_heads, num_layers):
+def _(
+    LogisticRegression,
+    accuracy_score,
+    all_X_train,
+    all_X_val,
+    num_heads,
+    num_layers,
+    y_train,
+    y_val,
+):
+    accs = []
     for layer in range(num_layers):
         for head in range(num_heads):
             X_train = all_X_train[:, layer, head, :]
-            X_val = all_X_val[: :, layer, head, :]
-            print(X_train.shape)
+            X_val = all_X_val[::, layer, head, :]
+            clf = LogisticRegression(max_iter=1000).fit(X_train, y_train)
+            y_val_pred = clf.predict(X_val)
+            acc = accuracy_score(y_val, y_val_pred)
+            accs.append({"layer": layer, "head": head, "accuracy": acc})
+    return (accs,)
+
+
+@app.cell
+def _(accs, pl):
+    pl.DataFrame(accs).pivot(
+        "head", index="layer", values="accuracy"
+    ).to_pandas().set_index(
+        "layer"
+    ).sort_index(ascending=False)
     return
 
 
 @app.cell
-def _():
+def _(accs, pl, sns):
+    sns.heatmap(
+        pl.DataFrame(accs)
+        .pivot("head", index="layer", values="accuracy")
+        .to_pandas()
+        .set_index("layer")
+        .sort_index(ascending=False),
+        annot=False,
+        cmap="Blues",
+    )
     return
 
 
