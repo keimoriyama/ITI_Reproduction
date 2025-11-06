@@ -963,7 +963,6 @@ def get_separated_activations(labels, head_wise_activations):
         actual_labels.append(dataset[i]["mc2_targets"]["labels"])
 
     idxs_to_split_at = np.cumsum([len(x) for x in actual_labels])
-
     labels = list(labels)
     separated_labels = []
     for i in range(len(idxs_to_split_at)):
@@ -977,6 +976,7 @@ def get_separated_activations(labels, head_wise_activations):
     # (data_num, head_num, layer_num, dim)
     separated_head_wise_activations = np.split(head_wise_activations, idxs_to_split_at)
 
+    import ipdb;ipdb.set_trace()
     return separated_head_wise_activations, separated_labels, idxs_to_split_at
 
 
