@@ -43,7 +43,9 @@ class ITI_Intervener:
     def __init__(self, direction, multiplier):
         if not isinstance(direction, torch.Tensor):
             direction = torch.tensor(direction)
-        self.direction = direction.cuda().half()
+        self.direction = (
+            direction.cuda().half() if torch.cuda.is_available() else direction.half()
+        )
         self.multiplier = multiplier
         self.states = []
         self.actions = []

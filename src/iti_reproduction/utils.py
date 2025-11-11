@@ -615,36 +615,36 @@ def alt_tqa_evaluate(
 
     for mdl in models.keys():
         # gpt-3
-        if mdl in ["ada", "babbage", "curie", "davinci"]:  # gpt-3 models
-            try:
-                models.run_GPT3(questions, mdl, mdl, preset)
-                save_questions(questions, output_path)
-                if "mc" in metric_names:
-                    models.run_probs_GPT3(questions, mdl, mdl, preset=preset)
-                    save_questions(questions, output_path)
-            except Exception as err:
-                print(err)
+        # if mdl in ["ada", "babbage", "curie", "davinci"]:  # gpt-3 models
+        #     try:
+        #         models.run_GPT3(questions, mdl, mdl, preset)
+        #         save_questions(questions, output_path)
+        #         if "mc" in metric_names:
+        #             models.run_probs_GPT3(questions, mdl, mdl, preset=preset)
+        #             save_questions(questions, output_path)
+        #     except Exception as err:
+        #         print(err)
 
         # gpt-2
-        if mdl in ["gpt2", "gpt2-xl"]:
-            try:
-                print(questions)
-                questions = models.run_answers(
-                    questions, mdl, mdl, preset, device=device, cache_dir=cache_dir
-                )
-                save_questions(questions, output_path)
-                if "mc" in metric_names:
-                    models.run_probs(
-                        questions,
-                        mdl,
-                        mdl,
-                        preset=preset,
-                        device=device,
-                        cache_dir=cache_dir,
-                    )
-                    save_questions(questions, output_path)
-            except Exception as err:
-                print(err)
+        # if mdl in ["gpt2", "gpt2-xl"]:
+        #     try:
+        #         print(questions)
+        #         questions = models.run_answers(
+        #             questions, mdl, mdl, preset, device=device, cache_dir=cache_dir
+        #         )
+        #         save_questions(questions, output_path)
+        #         if "mc" in metric_names:
+        #             models.run_probs(
+        #                 questions,
+        #                 mdl,
+        #                 mdl,
+        #                 preset=preset,
+        #                 device=device,
+        #                 cache_dir=cache_dir,
+        #             )
+        #             save_questions(questions, output_path)
+        #     except Exception as err:
+        #         print(err)
 
         # llama
         if "llama" in mdl or "alpaca" in mdl or "vicuna" in mdl:
@@ -671,6 +671,10 @@ def alt_tqa_evaluate(
             save_questions(questions, output_path)
 
             if "mc" in metric_names:
+                import ipdb
+
+                ipdb.set_trace()
+
                 questions = tqa_run_probs(
                     questions,
                     mdl,
@@ -976,9 +980,6 @@ def get_separated_activations(labels, head_wise_activations):
     # (data_num, head_num, layer_num, dim)
     separated_head_wise_activations = np.split(head_wise_activations, idxs_to_split_at)
 
-    import ipdb
-
-    ipdb.set_trace()
     return separated_head_wise_activations, separated_labels, idxs_to_split_at
 
 

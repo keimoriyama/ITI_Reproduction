@@ -26,6 +26,8 @@ def intervene(cfg: ITIConfig):
     df = df.sort_values(
         by="Question", key=lambda x: x.map({k: i for i, k in enumerate(golden_q_order)})
     )  # get two folds using numpy
+    if cfg.debug:
+        df = df.sample(n=10, random_state=cfg.seed).reset_index(drop=True)
     fold_idxs = np.array_split(np.arange(len(df)), cfg.num_fold)
 
     # create model
@@ -56,6 +58,7 @@ def intervene(cfg: ITIConfig):
     labels = np.load(
         base_dir / f"{cfg.model_name}_{cfg.dataset_name}_labels.npy".replace("/", "_")
     )
+    # reshape to (batch, seq_len, num_heads, head_dim)
     head_wise_activations = rearrange(
         head_wise_activations, "b l (h d) -> b l h d", h=num_heads
     )
@@ -145,18 +148,18 @@ def intervene(cfg: ITIConfig):
                 top_heads_by_layer[layer] = []
             top_heads_by_layer[layer].append(head)
         for layer, heads in top_heads_by_layer.items():
-            direction = torch.zeros(head_dim * num_heads).to("cpu")
+            direction = torch.zeros(head_dim * num_heads).to("cuda")
             for head in heads:
                 # direction
                 dir = torch.tensor(
                     com_directions[layer_head_to_flattened_idx(layer, head, num_heads)],
                     dtype=torch.float32,
-                ).to("cpu")
+                ).to("cuda")
                 # 正規化
                 dir = dir / torch.norm(dir)
                 activations = torch.tensor(
                     tuning_activations[:, layer, head, :], dtype=torch.float32
-                ).to("cpu")  # batch x 128
+                ).to("cuda")  # batch x 128
                 # ここは標準偏差を計算している？
                 # 論文と付き合わせながら確認する必要あり
                 proj_vals = activations @ dir.T
@@ -182,6 +185,7 @@ def intervene(cfg: ITIConfig):
             filename += "_random"
         Path("results_dump/answer_dump/").mkdir(parents=True, exist_ok=True)
         Path("results_dump/summary_dump/").mkdir(parents=True, exist_ok=True)
+
         curr_fold_results = alt_tqa_evaluate(
             models={cfg.model_name: intervened_model},
             metric_names=["info", "mc"],
