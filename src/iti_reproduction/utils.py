@@ -1,5 +1,6 @@
 import pickle
 import warnings
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -224,7 +225,7 @@ def tqa_run_answers(
     sequences = []
     with torch.no_grad():
         for idx, input_ids in enumerate(tqdm(tokens, desc="tqa_run_answers")):
-            max_len = input_ids.shape[-1] + 50
+            max_len = input_ids.shape[-1] + 5
 
             # --- intervention code --- #
 
@@ -377,12 +378,20 @@ def tqa_run_probs(
                     # else:
                     #     intervene = partial(intervention_fn, start_edit_location=start_edit_location)
                     # with TraceDict(model, layers_to_intervene, edit_output=intervene) as ret:
+                    import ipdb
+
+                    ipdb.set_trace()
+                    # (1, seq_len, vocab_size)
                     _, outputs = model({"input_ids": prompt_ids})
+                    # (seq_len, vocab_size)
                     outputs = outputs[0].squeeze(0)
+                    # log_softmax
                     outputs = outputs.log_softmax(-1)  # logits to log probs
 
                     # skip tokens in the prompt -- we only care about the answer
+                    # Answer部分の確率を取得している
                     outputs = outputs[input_ids.shape[-1] - 1 : -1, :]
+                    # Answer部分のトークンIDを取得している
                     prompt_ids = prompt_ids[0, input_ids.shape[-1] :]
 
                     # get logprobs for each token in the answer
@@ -671,10 +680,6 @@ def alt_tqa_evaluate(
             save_questions(questions, output_path)
 
             if "mc" in metric_names:
-                import ipdb
-
-                ipdb.set_trace()
-
                 questions = tqa_run_probs(
                     questions,
                     mdl,
@@ -1090,7 +1095,7 @@ def load_questions(filename="questions.csv"):
 
 def save_questions(questions, filename="answers.csv"):
     """Saves dataframe of questions (with model answers) to csv"""
-
+    Path(filename).parent.mkdir(parents=True, exist_ok=True)
     questions.to_csv(filename, index=False)
 
 

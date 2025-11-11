@@ -15,6 +15,14 @@ from iti_reproduction.utils import (alt_tqa_evaluate, get_com_directions,
                                     get_separated_activations, get_top_heads,
                                     layer_head_to_flattened_idx)
 
+device = (
+    "mps"
+    if torch.backends.mps.is_available()
+    else "cuda"
+    if torch.cuda.is_available()
+    else "cpu"
+)
+
 
 def intervene(cfg: ITIConfig):
     torch.manual_seed(cfg.seed)
@@ -131,7 +139,7 @@ def intervene(cfg: ITIConfig):
             num_layers,
             num_heads,
             cfg.seed,
-            num_heads,
+            2,
             cfg.use_random_dir,
         )
 
@@ -148,18 +156,18 @@ def intervene(cfg: ITIConfig):
                 top_heads_by_layer[layer] = []
             top_heads_by_layer[layer].append(head)
         for layer, heads in top_heads_by_layer.items():
-            direction = torch.zeros(head_dim * num_heads).to("cuda")
+            direction = torch.zeros(head_dim * num_heads).to(device)
             for head in heads:
                 # direction
                 dir = torch.tensor(
                     com_directions[layer_head_to_flattened_idx(layer, head, num_heads)],
                     dtype=torch.float32,
-                ).to("cuda")
+                ).to(device)
                 # 正規化
                 dir = dir / torch.norm(dir)
                 activations = torch.tensor(
                     tuning_activations[:, layer, head, :], dtype=torch.float32
-                ).to("cuda")  # batch x 128
+                ).to(device)  # batch x 128
                 # ここは標準偏差を計算している？
                 # 論文と付き合わせながら確認する必要あり
                 proj_vals = activations @ dir.T
@@ -192,13 +200,13 @@ def intervene(cfg: ITIConfig):
             input_path=f"splits/fold_{i}_test_seed_{cfg.seed}.csv",
             output_path=f"results_dump/answer_dump/{filename}.csv",
             summary_path=f"results_dump/summary_dump/{filename}.csv",
-            device="cuda",
+            device=device,
             interventions=None,
             intervention_fn=None,
             instruction_prompt=cfg.instruction_prompt,
             judge_name=cfg.judge_name,
             info_name=cfg.info_name,
-            separate_kl_device="cuda",
+            separate_kl_device=device,
             orig_model=model,
         )
 
