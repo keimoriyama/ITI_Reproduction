@@ -872,7 +872,7 @@ def train_probes(
     y_val = np.concatenate([separated_labels[i] for i in val_set_idxs], axis=0)
 
     for layer in tqdm(range(num_layers), desc="train_probes"):
-        for head in range(num_heads):
+        for head in tqdm(range(num_heads), desc=f"Layer {layer} "):
             X_train = all_X_train[:, layer, head, :]
             X_val = all_X_val[:, layer, head, :]
 
