@@ -196,8 +196,8 @@ def intervene(cfg: ITIConfig):
             filename += "_com"
         if cfg.use_random_dir:
             filename += "_random"
-        Path("results_dump/answer_dump/").mkdir(parents=True, exist_ok=True)
-        Path("results_dump/summary_dump/").mkdir(parents=True, exist_ok=True)
+        Path("./results_dump/answer_dump/").mkdir(parents=True, exist_ok=True)
+        Path("./results_dump/summary_dump/").mkdir(parents=True, exist_ok=True)
 
         curr_fold_results = alt_tqa_evaluate(
             models={cfg.model_name: intervened_model},
