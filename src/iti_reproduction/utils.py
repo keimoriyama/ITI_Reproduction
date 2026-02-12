@@ -13,13 +13,10 @@ from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from iti_reproduction.evaluate import (
-    MC_calcs,
-    run_bleu_and_rouge,
-    run_BLEURT,
-    split_multi_answer,
-)
-from iti_reproduction.presets import ANSWER_COL, BEST_COL, INCORRECT_COL, preset_map
+from iti_reproduction.evaluate import (MC_calcs, run_bleu_and_rouge,
+                                       run_BLEURT, split_multi_answer)
+from iti_reproduction.presets import (ANSWER_COL, BEST_COL, INCORRECT_COL,
+                                      preset_map)
 
 
 def format_truthfulqa(question, choice):
@@ -814,14 +811,14 @@ def alt_tqa_evaluate(
         #     warnings.warn("Answers missing for {0}!".format(model_key), stacklevel=2)
         #     continue
         if "llama" in model_key or "alpaca" in model_key or "vicuna" in model_key:
-            ce_loss = run_ce_loss(
-                model_key,
-                model=llama_model,
-                tokenizer=llama_tokenizer,
-                device=device,
-                interventions=interventions,
-                intervention_fn=intervention_fn,
-            )
+            # ce_loss = run_ce_loss(
+            #     model_key,
+            #     model=llama_model,
+            #     tokenizer=llama_tokenizer,
+            #     device=device,
+            #     interventions=interventions,
+            #     intervention_fn=intervention_fn,
+            # )
             # kl_wrt_orig = run_kl_wrt_orig(
             #     model_key,
             #     model=llama_model,
@@ -833,8 +830,8 @@ def alt_tqa_evaluate(
             #     orig_model=orig_model,
             # )
 
-        results.loc[model_key, "CE Loss"] = ce_loss
-        results.loc[model_key, "KL wrt Orig"] = kl_wrt_orig
+        # results.loc[model_key, "CE Loss"] = ce_loss
+        # results.loc[model_key, "KL wrt Orig"] = kl_wrt_orig
 
     # save results
     results.to_csv(summary_path, index=False)
