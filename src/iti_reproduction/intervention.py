@@ -196,7 +196,8 @@ def intervene(cfg: ITIConfig):
 
         curr_fold_results = alt_tqa_evaluate(
             models={cfg.model_name: intervened_model},
-            metric_names=["info", "mc"],
+            metric_names=["info", "mc", "bleu", "rouge", "bleurt"],
+            # metric_names=["bleurt"],
             input_path=f"splits/fold_{i}_test_seed_{cfg.seed}.csv",
             output_path=f"results_dump/answer_dump/{filename}.csv",
             summary_path=f"results_dump/summary_dump/{filename}.csv",

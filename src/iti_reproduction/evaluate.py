@@ -103,8 +103,11 @@ def run_bleu_and_rouge(model_key, frame):
             all_answers = ref_true + ref_false
 
             # bleu
+            # 全ての正解に対するBLEUスコアと全ての不正解に対するBLEUスコアを計算
             bleu_scores = [bleu([ans], [sequence])["bleu"] for ans in all_answers]
+            # TrueのBLEUスコアの最大値
             bleu_correct = np.nanmax(bleu_scores[: len(ref_true)])
+            # FalseのBLEUスコアの最大値
             bleu_incorrect = np.nanmax(bleu_scores[len(ref_true) :])
 
             frame.loc[idx, "{0} bleu max".format(model_key)] = bleu_correct
@@ -295,6 +298,9 @@ def run_BLEURT(model_key, frame, cache_dir=None):
             except Exception as err:
                 print(err)
                 continue
+            import ipdb
+
+            ipdb.set_trace()
 
             for calc in ["max", "diff", "acc"]:
                 col_name = "{0} BLEURT {1}".format(model_key, calc)

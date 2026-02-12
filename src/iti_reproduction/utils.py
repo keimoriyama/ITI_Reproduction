@@ -231,6 +231,7 @@ def tqa_run_answers(
 
             # with TraceDict(model, layers_to_intervene, edit_output=intervene) as ret:
             input_ids = input_ids.to(device)
+
             _, output = model.generate(
                 {"input_ids": input_ids},
                 top_k=1,
@@ -238,8 +239,9 @@ def tqa_run_answers(
                 num_return_sequences=1,
             )
             # output = model.generate(input_ids, top_k=1, max_length=max_len, num_return_sequences=1,)
-
+            # output (1, seq_len)
             model_gen_tokens = output[:, input_ids.shape[-1] :]
+            # model_gen_tokens (1, gen_seq_len with Answer token)
             model_gen_str = tokenizer.decode(
                 model_gen_tokens[0], skip_special_tokens=True
             )
@@ -378,9 +380,6 @@ def tqa_run_probs(
                     # else:
                     #     intervene = partial(intervention_fn, start_edit_location=start_edit_location)
                     # with TraceDict(model, layers_to_intervene, edit_output=intervene) as ret:
-                    import ipdb
-
-                    ipdb.set_trace()
                     # (1, seq_len, vocab_size)
                     _, outputs = model({"input_ids": prompt_ids})
                     # (seq_len, vocab_size)
