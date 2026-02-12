@@ -10,9 +10,12 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from iti_reproduction.interveners import Collector, wrapper
 from iti_reproduction.scheme import ITIConfig
-from iti_reproduction.utils import (get_llama_activations_pyvene,
-                                    tokenized_tqa, tokenized_tqa_gen,
-                                    tokenized_tqa_gen_end_q)
+from iti_reproduction.utils import (
+    get_llama_activations_pyvene,
+    tokenized_tqa,
+    tokenized_tqa_gen,
+    tokenized_tqa_gen_end_q,
+)
 
 
 def get_activation(cfg: ITIConfig):
@@ -79,7 +82,7 @@ def get_activation(cfg: ITIConfig):
     base_dir = Path("./features")
     base_dir.mkdir(parents=True, exist_ok=True)
     print("saving raw prompts")
-    pl.DataFrame({"prompts": raw_prompt}).write_csv(
+    pl.DataFrame({"prompts": prompts}).write_csv(
         base_dir / f"{cfg.model_name}_{cfg.dataset_name}_prompts.csv".replace("/", "_")
     )
 
