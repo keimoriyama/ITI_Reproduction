@@ -1,5 +1,6 @@
 import pickle
 import warnings
+from multiprocessing import RawArray
 from pathlib import Path
 
 import numpy as np
@@ -12,10 +13,13 @@ from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from iti_reproduction.evaluate import (MC_calcs, run_bleu_and_rouge,
-                                       run_BLEURT, split_multi_answer)
-from iti_reproduction.presets import (ANSWER_COL, BEST_COL, INCORRECT_COL,
-                                      preset_map)
+from iti_reproduction.evaluate import (
+    MC_calcs,
+    run_bleu_and_rouge,
+    run_BLEURT,
+    split_multi_answer,
+)
+from iti_reproduction.presets import ANSWER_COL, BEST_COL, INCORRECT_COL, preset_map
 
 
 def format_truthfulqa(question, choice):
@@ -55,6 +59,7 @@ def tokenized_tqa_gen_end_q(dataset, tokenizer):
     all_prompts = []
     all_labels = []
     all_categories = []
+    raw_prompts = []
     for i in range(len(dataset)):
         question = dataset[i]["question"]
         category = dataset[i]["category"]
@@ -64,6 +69,7 @@ def tokenized_tqa_gen_end_q(dataset, tokenizer):
         for j in range(len(dataset[i]["correct_answers"])):
             answer = dataset[i]["correct_answers"][j]
             prompt = format_truthfulqa_end_q(question, answer, rand_question)
+            raw_prompts.append(prompt)
             prompt = tokenizer(prompt, return_tensors="pt").input_ids
             all_prompts.append(prompt)
             all_labels.append(1)
@@ -72,18 +78,20 @@ def tokenized_tqa_gen_end_q(dataset, tokenizer):
         for j in range(len(dataset[i]["incorrect_answers"])):
             answer = dataset[i]["incorrect_answers"][j]
             prompt = format_truthfulqa_end_q(question, answer, rand_question)
+            raw_prompts.append(prompt)
             prompt = tokenizer(prompt, return_tensors="pt").input_ids
             all_prompts.append(prompt)
             all_labels.append(0)
             all_categories.append(category)
 
-    return all_prompts, all_labels, all_categories
+    return raw_prompts, all_prompts, all_labels, all_categories
 
 
 def tokenized_tqa_gen(dataset, tokenizer):
     all_prompts = []
     all_labels = []
     all_categories = []
+    raw_prompts = []
     for i in range(len(dataset)):
         question = dataset[i]["question"]
         category = dataset[i]["category"]
@@ -91,6 +99,7 @@ def tokenized_tqa_gen(dataset, tokenizer):
         for j in range(len(dataset[i]["correct_answers"])):
             answer = dataset[i]["correct_answers"][j]
             prompt = format_truthfulqa(question, answer)
+            raw_prompts.append(prompt)
             prompt = tokenizer(prompt, return_tensors="pt").input_ids
             all_prompts.append(prompt)
             all_labels.append(1)
@@ -99,12 +108,13 @@ def tokenized_tqa_gen(dataset, tokenizer):
         for j in range(len(dataset[i]["incorrect_answers"])):
             answer = dataset[i]["incorrect_answers"][j]
             prompt = format_truthfulqa(question, answer)
+            raw_prompts.append(prompt)
             prompt = tokenizer(prompt, return_tensors="pt").input_ids
             all_prompts.append(prompt)
             all_labels.append(0)
             all_categories.append(category)
 
-    return all_prompts, all_labels, all_categories
+    return raw_prompts, all_prompts, all_labels, all_categories
 
 
 def get_llama_activations_pyvene(collected_model, collectors, prompt, device):

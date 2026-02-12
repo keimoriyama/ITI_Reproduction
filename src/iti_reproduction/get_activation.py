@@ -41,7 +41,7 @@ def get_activation(cfg: ITIConfig):
 
     print("Tokenizing prompts")
     if cfg.dataset_name == "tqa_gen" or cfg.dataset_name == "tqa_gen_end_q":
-        prompts, labels, categories = formatter(dataset, tokenizer)
+        raw_prompt, prompts, labels, categories = formatter(dataset, tokenizer)
         with open(
             f"./features/{cfg.model_name}_{cfg.dataset_name}_categories.pkl".replace(
                 "/", "_"
@@ -50,7 +50,7 @@ def get_activation(cfg: ITIConfig):
         ) as f:
             pickle.dump(categories, f)
     else:
-        raw_prompt, prompts, labels = formatter(dataset, tokenizer)
+        raw_prompt, prompts, labels, categories = formatter(dataset, tokenizer)
     collectors = []
     pv_config = []
 
@@ -82,7 +82,7 @@ def get_activation(cfg: ITIConfig):
     base_dir = Path("./features")
     base_dir.mkdir(parents=True, exist_ok=True)
     print("saving raw prompts")
-    pl.DataFrame({"prompts": prompts}).write_csv(
+    pl.DataFrame({"prompts": raw_prompt}).write_csv(
         base_dir / f"{cfg.model_name}_{cfg.dataset_name}_prompts.csv".replace("/", "_")
     )
 
