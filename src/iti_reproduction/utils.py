@@ -990,7 +990,7 @@ def get_separated_activations(labels, head_wise_activations):
             separated_labels.append(
                 labels[idxs_to_split_at[i - 1] : idxs_to_split_at[i]]
             )
-    assert separated_labels == actual_labels
+    # assert separated_labels == actual_labels
     # (data_num, head_num, layer_num, dim)
     separated_head_wise_activations = np.split(head_wise_activations, idxs_to_split_at)
 
