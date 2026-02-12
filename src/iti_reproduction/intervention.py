@@ -190,7 +190,9 @@ def intervene(cfg: ITIConfig):
             )
         intervened_model = pv.IntervenableModel(pv_config, model)
 
-        filename = f"{cfg.model_prefix}{cfg.model_name}_seed_{cfg.seed}_top_{num_heads}_heads_alpha_{int(cfg.alpha)}_fold_{i}"
+        filename = f"{cfg.model_prefix}{cfg.model_name}_seed_{cfg.seed}_top_{num_heads}_heads_alpha_{int(cfg.alpha)}_fold_{i}".replace(
+            "/", "_"
+        )
 
         if cfg.use_center_of_mass:
             filename += "_com"
