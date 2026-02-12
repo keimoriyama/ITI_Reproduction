@@ -244,7 +244,7 @@ def run_BLEURT(model_key, frame, cache_dir=None):
     model_key: Column name of model answers (populate before running metrics)
     """
 
-    bleurt = evaluate.load("bleurt", cache_dir=cache_dir)
+    bleurt = evaluate.load("bleurt")
 
     for calc in ["max", "diff", "acc"]:
         col_name = "{0} BLEURT {1}".format(model_key, calc)
