@@ -10,10 +10,15 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from iti_reproduction.interveners import ITI_Intervener, wrapper
 from iti_reproduction.scheme import ITIConfig
+
 # Specific pyvene imports
-from iti_reproduction.utils import (alt_tqa_evaluate, get_com_directions,
-                                    get_separated_activations, get_top_heads,
-                                    layer_head_to_flattened_idx)
+from iti_reproduction.utils import (
+    alt_tqa_evaluate,
+    get_com_directions,
+    get_separated_activations,
+    get_top_heads,
+    layer_head_to_flattened_idx,
+)
 
 device = (
     "mps"
@@ -196,7 +201,7 @@ def intervene(cfg: ITIConfig):
 
         curr_fold_results = alt_tqa_evaluate(
             models={cfg.model_name: intervened_model},
-            metric_names=["info", "mc", "bleu", "rouge", "bleurt"],
+            metric_names=["mc", "bleu", "rouge", "bleurt"],
             # metric_names=["bleurt"],
             input_path=f"splits/fold_{i}_test_seed_{cfg.seed}.csv",
             output_path=f"results_dump/answer_dump/{filename}.csv",
