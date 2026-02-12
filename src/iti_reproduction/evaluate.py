@@ -1,12 +1,12 @@
 import logging
 import warnings
 
-import evaluate
 import numpy as np
 import pandas as pd
 import sacrebleu
 from rouge_score import rouge_scorer, scoring
 
+import evaluate
 from iti_reproduction.presets import ANSWER_COL, INCORRECT_COL
 
 
@@ -298,9 +298,6 @@ def run_BLEURT(model_key, frame, cache_dir=None):
             except Exception as err:
                 print(err)
                 continue
-            import ipdb
-
-            ipdb.set_trace()
 
             for calc in ["max", "diff", "acc"]:
                 col_name = "{0} BLEURT {1}".format(model_key, calc)
