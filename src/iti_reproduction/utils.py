@@ -13,13 +13,10 @@ from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from iti_reproduction.evaluate import (
-    MC_calcs,
-    run_bleu_and_rouge,
-    run_BLEURT,
-    split_multi_answer,
-)
-from iti_reproduction.presets import ANSWER_COL, BEST_COL, INCORRECT_COL, preset_map
+from iti_reproduction.evaluate import (MC_calcs, run_bleu_and_rouge,
+                                       run_BLEURT, split_multi_answer)
+from iti_reproduction.presets import (ANSWER_COL, BEST_COL, INCORRECT_COL,
+                                      preset_map)
 
 
 def format_truthfulqa(question, choice):
@@ -235,7 +232,7 @@ def tqa_run_answers(
     sequences = []
     with torch.no_grad():
         for idx, input_ids in enumerate(tqdm(tokens, desc="tqa_run_answers")):
-            max_len = input_ids.shape[-1] + 5
+            max_len = input_ids.shape[-1] + 50
 
             # --- intervention code --- #
 
