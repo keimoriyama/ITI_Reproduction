@@ -908,8 +908,6 @@ def get_top_heads(
     )
     all_head_accs_np = all_head_accs_np.reshape(num_layers, num_heads)
 
-    top_heads = []
-
     top_accs = np.argsort(all_head_accs_np.reshape(num_heads * num_layers))[::-1][
         :num_to_intervene
     ]

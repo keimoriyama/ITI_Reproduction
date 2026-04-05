@@ -10,15 +10,10 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from iti_reproduction.interveners import ITI_Intervener, wrapper
 from iti_reproduction.scheme import ITIConfig
-
 # Specific pyvene imports
-from iti_reproduction.utils import (
-    alt_tqa_evaluate,
-    get_com_directions,
-    get_separated_activations,
-    get_top_heads,
-    layer_head_to_flattened_idx,
-)
+from iti_reproduction.utils import (alt_tqa_evaluate, get_com_directions,
+                                    get_separated_activations, get_top_heads,
+                                    layer_head_to_flattened_idx)
 
 device = (
     "mps"
@@ -137,15 +132,15 @@ def intervene(cfg: ITIConfig):
         #     com_directions = None
         # top_heads: List[Tuple[int, int]] = [(layer, head), ...]
         top_heads, probes = get_top_heads(
-            train_set_idxs,
-            val_set_idxs,
-            separated_head_wise_activations,
-            separated_labels,
-            num_layers,
-            num_heads,
-            cfg.seed,
-            2,
-            cfg.use_random_dir,
+            train_idxs=train_set_idxs,
+            val_idxs=val_set_idxs,
+            separated_activations=separated_head_wise_activations,
+            separated_labels=separated_labels,
+            num_layers=num_layers,
+            num_heads=num_heads,
+            seed=cfg.seed,
+            num_to_intervene=2,
+            use_random_dir=cfg.use_random_dir,
         )
 
         print("Heads intervened: ", sorted(top_heads))
