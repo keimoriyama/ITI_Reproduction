@@ -30,5 +30,11 @@ def _(pl):
     return
 
 
+@app.cell
+def _(pl):
+    pl.read_csv("results_dump/answer_dump/meta-llama_Llama-2-7b-chat-hf_seed_42_top_10_heads_alpha_15_fold_1.csv")
+    return
+
+
 if __name__ == "__main__":
     app.run()
