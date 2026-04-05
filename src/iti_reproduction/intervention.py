@@ -223,5 +223,5 @@ def intervene(cfg: ITIConfig):
     final = results.mean(axis=0)
 
     print(
-        f"alpha: {cfg.alpha}, heads: {num_heads}, True*Info Score: {final[1] * final[0]}, True Score: {final[1]}, Info Score: {final[0]}, MC1 Score: {final[2]}, MC2 Score: {final[3]}, CE Loss: {final[4]}, KL wrt Original: {final[5]}"
+        f"alpha: {cfg.alpha}, heads: {num_heads}, True*Info Score: {final[1] * final[0]}, True Score: {final[1]}, Info Score: {final[0]}, MC1 Score: {final[2]}, MC2 Score: {final[3]}"
     )
