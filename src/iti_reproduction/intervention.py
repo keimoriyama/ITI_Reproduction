@@ -98,7 +98,7 @@ def intervene(cfg: ITIConfig):
         test_idxs = fold_idxs[i]
 
         print(f"Running fold {i}")
-
+        print(f"Train size : {len(train_idxs)}, Test size: {len(test_idxs)}")
         # pick a val set using numpy
         train_set_idxs = np.random.choice(
             train_idxs, size=int(len(train_idxs) * (1 - cfg.val_ratio)), replace=False
