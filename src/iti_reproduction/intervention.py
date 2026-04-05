@@ -139,7 +139,7 @@ def intervene(cfg: ITIConfig):
             num_layers=num_layers,
             num_heads=num_heads,
             seed=cfg.seed,
-            num_to_intervene=10,
+            num_to_intervene=cfg.num_heads_to_intervene,
             use_random_dir=cfg.use_random_dir,
         )
 
@@ -185,7 +185,7 @@ def intervene(cfg: ITIConfig):
             )
         intervened_model = pv.IntervenableModel(pv_config, model)
 
-        filename = f"{cfg.model_prefix}{cfg.model_name}_seed_{cfg.seed}_top_{num_heads}_heads_alpha_{int(cfg.alpha)}_fold_{i}".replace(
+        filename = f"{cfg.model_prefix}{cfg.model_name}_seed_{cfg.seed}_top_{cfg.num_heads_to_intervene}_heads_alpha_{int(cfg.alpha)}_fold_{i}".replace(
             "/", "_"
         )
 

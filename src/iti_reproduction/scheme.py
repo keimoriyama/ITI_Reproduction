@@ -17,6 +17,7 @@ class ITIConfig(BaseModel):
     )
 
     alpha: float = Field(15, description="alpha, intervention strength")
+    num_heads_to_intervene: int = Field(10, description="number of heads to intervene")
     num_fold: int = Field(2, description="number of folds")
     val_ratio: float = Field(
         0.2, description="ratio of validation set size to development set size"
