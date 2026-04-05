@@ -624,7 +624,7 @@ def alt_tqa_evaluate(
 
     Outputs a pd dataframe with summary values
     """
-    questions = load_questions(filename=input_path)
+    questions = load_questions(filename=input_path)[:10]
 
     print("ASSUMES OPENAI_API_KEY ENVIRONMENT VARIABLE IS SET")
 

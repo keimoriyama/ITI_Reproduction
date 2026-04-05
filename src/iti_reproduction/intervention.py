@@ -139,7 +139,7 @@ def intervene(cfg: ITIConfig):
             num_layers=num_layers,
             num_heads=num_heads,
             seed=cfg.seed,
-            num_to_intervene=2,
+            num_to_intervene=10,
             use_random_dir=cfg.use_random_dir,
         )
 
